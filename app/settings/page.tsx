@@ -1,30 +1,25 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { motion } from 'framer-motion'
+import { Bell, Lock, FileText, HelpCircle, Settings as SettingsIcon } from 'lucide-react'
+import { PageHeader } from '@/components/premium/page-header'
+import { AnimatedCard } from '@/components/premium/animated-card'
+import { PremiumButton } from '@/components/premium/premium-button'
 import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Bell, Lock, FileText, HelpCircle, LogOut } from 'lucide-react'
 
 export default function SettingsPage() {
-  const [businessName, setBusinessName] = useState('Your Business')
-  const [email, setEmail] = useState('user@example.com')
-  const [phone, setPhone] = useState('+254 7XX XXX XXX')
-  const [location, setLocation] = useState('Nairobi, Kenya')
-
   const settingsSections = [
     {
       icon: Lock,
       title: 'Security',
-      description: 'Manage your password and security settings',
+      description: 'Manage password and security settings',
       items: ['Change Password', 'Two-Factor Authentication', 'Login History'],
     },
     {
       icon: Bell,
       title: 'Notifications',
       description: 'Control how you receive updates',
-      items: ['Email Notifications', 'Order Updates', 'Listing Expiry Alerts'],
+      items: ['Email Notifications', 'Order Updates', 'Listing Alerts'],
     },
     {
       icon: FileText,
@@ -36,120 +31,97 @@ export default function SettingsPage() {
       icon: HelpCircle,
       title: 'Support',
       description: 'Get help when you need it',
-      items: ['Help Center', 'Contact Support', 'Report an Issue'],
+      items: ['Help Center', 'Contact Support', 'Report Issue'],
     },
   ]
 
   return (
-    <div className="space-y-8 max-w-2xl">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Settings</h1>
-        <p className="text-muted-foreground">Manage your account and preferences</p>
-      </div>
+    <div className="space-y-8 max-w-3xl">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <PageHeader
+          title="Settings"
+          description="Manage your account and preferences"
+          icon={<SettingsIcon className="h-6 w-6" />}
+        />
+      </motion.div>
 
       {/* Profile Section */}
-      <Card className="border-border">
-        <CardHeader>
-          <CardTitle>Profile Information</CardTitle>
-          <CardDescription>Update your business details</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <AnimatedCard className="p-6 space-y-6">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">Business Name</label>
-            <Input
-              value={businessName}
-              onChange={(e) => setBusinessName(e.target.value)}
-              placeholder="Your business name"
-            />
-          </div>
+            <h3 className="text-lg font-semibold text-foreground mb-4">Profile Information</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">Business Name</label>
+                <Input placeholder="Your business name" className="h-10" />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">Email</label>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">Email Address</label>
+                <Input type="email" placeholder="your@email.com" className="h-10" />
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Phone</label>
-              <Input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Phone number"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Location</label>
-              <Input
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="City, Country"
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Phone</label>
+                  <Input placeholder="Phone number" className="h-10" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">Location</label>
+                  <Input placeholder="City, Country" className="h-10" />
+                </div>
+              </div>
+
+              <PremiumButton className="w-full">Save Changes</PremiumButton>
             </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-foreground mb-2">Account Type</label>
-            <div className="flex gap-2">
-              <Badge className="bg-primary text-primary-foreground">Buyer</Badge>
-              <Badge variant="outline">Seller</Badge>
-            </div>
-          </div>
-
-          <Button className="w-full">Save Changes</Button>
-        </CardContent>
-      </Card>
+        </AnimatedCard>
+      </motion.div>
 
       {/* Settings Sections */}
       <div className="space-y-4">
-        {settingsSections.map((section) => {
+        {settingsSections.map((section, idx) => {
           const Icon = section.icon
           return (
-            <Card key={section.title} className="border-border">
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <Icon className="h-5 w-5 text-accent" />
+            <motion.div
+              key={section.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.15 + idx * 0.05 }}
+            >
+              <AnimatedCard className="p-6">
+                <div className="flex items-start gap-4 mb-4">
+                  <Icon className="h-6 w-6 text-primary" />
                   <div>
-                    <CardTitle className="text-lg">{section.title}</CardTitle>
-                    <CardDescription className="text-xs">{section.description}</CardDescription>
+                    <h3 className="font-semibold text-foreground">{section.title}</h3>
+                    <p className="text-sm text-muted-foreground">{section.description}</p>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {section.items.map((item) => (
-                    <Button key={item} variant="outline" className="text-xs">
+                    <motion.button
+                      key={item}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="px-4 py-2 rounded-lg bg-secondary text-foreground hover:bg-secondary/80 transition text-sm font-medium"
+                    >
                       {item}
-                    </Button>
+                    </motion.button>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </AnimatedCard>
+            </motion.div>
           )
         })}
       </div>
-
-      {/* Account Actions */}
-      <Card className="border-destructive/30 bg-destructive/5">
-        <CardHeader>
-          <CardTitle>Account Actions</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <Button variant="outline" className="w-full gap-2 justify-start">
-            <LogOut className="h-4 w-4" />
-            Sign Out
-          </Button>
-          <Button variant="destructive" className="w-full">
-            Delete Account
-          </Button>
-          <p className="text-xs text-muted-foreground">Deleting your account is permanent and cannot be undone.</p>
-        </CardContent>
-      </Card>
     </div>
   )
 }
