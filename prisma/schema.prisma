@@ -1,0 +1,233 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(cuid())
+  clerkId           String    @unique
+  email             String    @unique
+  name              String?
+  avatar            String?
+  businessName      String?
+  businessType      String?   // SELLER, BUYER, or BOTH
+  description       String?
+  verified          Boolean   @default(false)
+  rating            Float     @default(0)
+  reviewCount       Int       @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  listings          Listing[]
+  bids              Bid[]
+  receivedMessages  Message[] @relation("receiver")
+  sentMessages      Message[] @relation("sender")
+  orders            Order[]
+  notifications     Notification[]
+  auditLogs         AuditLog[]
+
+  @@index([businessType])
+  @@index([verified])
+}
+
+model Listing {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  title             String
+  description       String
+  category          String
+  subcategory       String?
+  quantity          Int
+  quantityAvailable Int
+  unit              String    // e.g., "pieces", "boxes", "pallets"
+  
+  minPrice          Float
+  currentPrice      Float
+  image             String?
+  images            String[]
+  
+  condition         String    // NEW, LIKE_NEW, USED, REFURBISHED
+  listingType       String    // FIXED_PRICE, AUCTION, BULK_DISCOUNT
+  
+  status            String    @default("ACTIVE") // ACTIVE, SOLD, INACTIVE, EXPIRED
+  isAuction         Boolean   @default(false)
+  auctionStartTime  DateTime?
+  auctionEndTime    DateTime?
+  
+  buyerCanNegotiate Boolean   @default(true)
+  shippingIncluded  Boolean   @default(false)
+  shippingCost      Float?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  expiresAt         DateTime?
+
+  // Relations
+  bids              Bid[]
+  orders            Order[]
+  watchlistItems    WatchlistItem[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+  @@index([listingType])
+}
+
+model Bid {
+  id                String    @id @default(cuid())
+  listingId         String
+  listing           Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  amount            Float
+  message           String?
+  
+  status            String    @default("ACTIVE") // ACTIVE, ACCEPTED, REJECTED, OUTBID
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([listingId, userId]) // Only one active bid per user per listing
+  @@index([userId])
+  @@index([listingId])
+  @@index([status])
+}
+
+model Order {
+  id                String    @id @default(cuid())
+  listingId         String
+  listing           Listing   @relation(fields: [listingId], references: [id])
+  buyerId           String
+  buyer             User      @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  
+  quantity          Int
+  unitPrice         Float
+  totalAmount       Float
+  
+  paymentStatus     String    @default("PENDING") // PENDING, COMPLETED, FAILED, REFUNDED
+  orderStatus       String    @default("PENDING") // PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
+  
+  shippingAddress   String?
+  trackingNumber    String?
+  
+  notes             String?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  payments          Payment[]
+  
+  @@index([buyerId])
+  @@index([listingId])
+  @@index([paymentStatus])
+  @@index([orderStatus])
+}
+
+model Payment {
+  id                String    @id @default(cuid())
+  orderId           String
+  order             Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  amount            Float
+  currency          String    @default("KES")
+  paymentMethod     String    // PESAPAL, BANK_TRANSFER, etc
+  paymentReference  String?   @unique
+  
+  status            String    @default("PENDING") // PENDING, COMPLETED, FAILED
+  
+  pesapalOrderId    String?
+  pesapalTrackingId String?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+  @@index([pesapalOrderId])
+}
+
+model Message {
+  id                String    @id @default(cuid())
+  senderId          String
+  sender            User      @relation("sender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId        String
+  receiver          User      @relation("receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  
+  content           String
+  read              Boolean   @default(false)
+  
+  createdAt         DateTime  @default(now())
+
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  type              String    // NEW_BID, ORDER_PLACED, PAYMENT_RECEIVED, MESSAGE, LISTING_EXPIRING
+  title             String
+  message           String
+  link              String?
+  
+  read              Boolean   @default(false)
+  
+  createdAt         DateTime  @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model WatchlistItem {
+  id                String    @id @default(cuid())
+  userId            String
+  listingId         String
+  listing           Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime  @default(now())
+
+  @@unique([userId, listingId])
+  @@index([userId])
+}
+
+model AuditLog {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  action            String
+  entity            String    // LISTING, ORDER, USER, PAYMENT
+  entityId          String
+  changes           Json?
+  
+  ipAddress         String?
+  userAgent         String?
+  
+  createdAt         DateTime  @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model AdminSettings {
+  id                String    @id @default(cuid())
+  maintenanceMode   Boolean   @default(false)
+  platformFeePercent Float    @default(5.0)
+  maxListingDuration Int      @default(30) // days
+  
+  updatedAt         DateTime  @updatedAt
+}
