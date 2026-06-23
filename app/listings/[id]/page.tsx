@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Heart, Share2, MessageSquare, Clock, Users, TrendingUp } from 'lucide-react'
+import { Header } from '@/components/layout/header'
+import { Footer } from '@/components/layout/footer'
 
 interface Listing {
   id: string
@@ -109,19 +111,28 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
   }
 
   if (loading || !listing) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">Loading...</main>
+        <Footer />
+      </div>
+    )
   }
 
   const highestBid = bids.length > 0 ? bids[0].amount : listing.price
 
   return (
-    <div className="space-y-8">
-      {/* Back Link */}
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" onClick={() => window.history.back()}>
-          ← Back
-        </Button>
-      </div>
+    <div className="min-h-screen bg-background flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+          {/* Back Link */}
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" onClick={() => window.history.back()}>
+              ← Back
+            </Button>
+          </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
@@ -275,21 +286,24 @@ export default function ListingDetailPage({ params }: { params: { id: string } }
             </Button>
           </div>
 
-          {/* Stats */}
-          <Card className="border-border">
-            <CardContent className="pt-6 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Views</span>
-                <span className="font-semibold text-foreground">234</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">In Watchlist</span>
-                <span className="font-semibold text-foreground">45</span>
-              </div>
-            </CardContent>
-          </Card>
+{/* Stats */}
+              <Card className="border-border">
+                <CardContent className="pt-6 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Views</span>
+                    <span className="font-semibold text-foreground">234</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">In Watchlist</span>
+                    <span className="font-semibold text-foreground">45</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
+      <Footer />
     </div>
   )
 }

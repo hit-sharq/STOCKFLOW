@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 interface PremiumButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -27,13 +26,13 @@ export function PremiumButton({
 
   const variants = {
     primary:
-      'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg hover:shadow-primary/30 active:scale-95',
+      'bg-gradient-to-r from-primary to-primary/80 text-primary-foreground hover:shadow-lg hover:shadow-primary/30',
     secondary:
-      'bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-95',
+      'bg-secondary text-secondary-foreground hover:bg-secondary/80',
     outline:
-      'border-2 border-primary text-primary hover:bg-primary/5 active:scale-95',
+      'border-2 border-primary text-primary hover:bg-primary/5',
     ghost:
-      'text-primary hover:bg-primary/10 active:scale-95',
+      'text-primary hover:bg-primary/10',
   };
 
   const sizes = {
@@ -43,9 +42,7 @@ export function PremiumButton({
   };
 
   return (
-    <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+    <button
       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${
         fullWidth ? 'w-full' : ''
       }`}
@@ -54,14 +51,10 @@ export function PremiumButton({
     >
       {icon && iconPosition === 'left' && !loading && icon}
       {loading && (
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-          className="h-4 w-4 border-2 border-transparent border-t-current rounded-full"
-        />
+        <span className="inline-block h-4 w-4 border-2 border-transparent border-t-current rounded-full animate-spin" />
       )}
       {children}
       {icon && iconPosition === 'right' && !loading && icon}
-    </motion.button>
+    </button>
   );
 }

@@ -3,6 +3,7 @@
 import { useAuth } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+
 import { motion } from 'framer-motion'
 import { ArrowRight, TrendingUp, Shield, BarChart3, Zap } from 'lucide-react'
 import { Header } from '@/components/layout/header'
@@ -15,12 +16,8 @@ import { Hero3D } from '@/components/home/hero-3d'
 export default function Page() {
   const { isSignedIn } = useAuth()
   const router = useRouter()
-
-  useEffect(() => {
-    if (isSignedIn) {
-      router.push('/dashboard')
-    }
-  }, [isSignedIn, router])
+  // After login: do not redirect users; keep them on the page they were viewing.
+  useEffect(() => {}, [])
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

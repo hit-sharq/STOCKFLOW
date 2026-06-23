@@ -8,7 +8,7 @@ interface StatCardProps {
   value: string | number;
   change?: number;
   icon?: React.ReactNode;
-  trend?: 'up' | 'down';
+  trend?: 'up' | 'down' | 'stable';
   variant?: 'default' | 'accent' | 'success';
 }
 
@@ -56,6 +56,9 @@ export function StatCard({
                   <TrendingDown className="h-4 w-4 text-destructive" />
                   <span className="text-sm font-medium text-destructive">{change}%</span>
                 </>
+              )}
+              {trend === 'stable' && (
+                <span className="text-sm font-medium text-muted-foreground">-{change}%</span>
               )}
             </div>
           )}

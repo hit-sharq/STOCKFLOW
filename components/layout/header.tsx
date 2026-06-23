@@ -23,13 +23,18 @@ export function Header() {
 
   const navItems = isSignedIn
     ? [
-        { name: 'Dashboard', href: '/dashboard' },
+        { name: 'Home', href: '/' },
         { name: 'Marketplace', href: '/marketplace' },
-        { name: 'Messages', href: '/messages' },
+        { name: 'Categories', href: '/categories' },
+        { name: 'Auctions', href: '/auctions' },
+        { name: 'Businesses', href: '/businesses' },
       ]
     : [
-        { name: 'Features', href: '#features' },
-        { name: 'How It Works', href: '#how-it-works' },
+        { name: 'Home', href: '/' },
+        { name: 'Marketplace', href: '/marketplace' },
+        { name: 'Categories', href: '/categories' },
+        { name: 'Auctions', href: '/auctions' },
+        { name: 'Businesses', href: '/businesses' },
       ]
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
@@ -106,18 +111,18 @@ export function Header() {
                 >
                   <LogOut className="h-5 w-5 text-foreground/70" />
                 </motion.button>
-                <div className="hidden md:flex items-center gap-2 pl-3 border-l border-border/50">
-                  {user?.profileImageUrl && (
-                    <img
-                      src={user.profileImageUrl}
-                      alt={user.firstName || 'User'}
-                      className="h-8 w-8 rounded-full"
-                    />
-                  )}
-                  <span className="text-sm font-medium text-foreground max-w-[100px] truncate">
-                    {user?.firstName}
-                  </span>
-                </div>
+<div className="hidden md:flex items-center gap-2 pl-3 border-l border-border/50">
+                   {user?.imageUrl && (
+                     <img
+                       src={user.imageUrl}
+                       alt={user.firstName || 'User'}
+                       className="h-8 w-8 rounded-full"
+                     />
+                   )}
+                   <span className="text-sm font-medium text-foreground max-w-[100px] truncate">
+                     {user?.firstName}
+                   </span>
+                 </div>
               </div>
             ) : (
               <div className="flex items-center gap-2">
